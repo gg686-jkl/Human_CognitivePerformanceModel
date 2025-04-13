@@ -1,10 +1,13 @@
 import streamlit as st
-import joblib
+import pickle
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle
+import requests
+import joblib
 
 # Load the trained model
 model = joblib.load('cognitive_model.pkl')
