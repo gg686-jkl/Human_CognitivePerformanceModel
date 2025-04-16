@@ -121,5 +121,5 @@ if st.button("Predict"):
     ax.set_xlabel('Cognitive Score')
     ax.set_ylabel('Density')
     ax.set_xlim(0, 100)
-    ax.set_title('您的得分超过了多少比例的人群？')
+    ax.set_title('Your Score Relative to Population Distribution')
     st.pyplot(fig)
