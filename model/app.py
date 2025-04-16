@@ -63,6 +63,7 @@ if st.button("开始评估"):
         prediction[0] = 1
     elif prediction[0] > 100:
         prediction[0] = 100
+    col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
         
     if prediction[0] <= 30:
         col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：高")
@@ -75,16 +76,24 @@ if st.button("开始评估"):
 
 
     # Reaction time analysis (strong negative correlation visible in plot)
-    if reaction_time > 500:
-        col2.error("⚠️ 您较低的认知分数与较长的反应时间（>500ms）显著相关。")
-    elif reaction_time > 400:
-        col2.warning("⚠️ 您中等的反应时间可能影响认知表现。")
-    else:
-        col2.success("✅ 您较短的反应时间与较高的认知分数显著相关")
+    if prediction[0] <= 30:
+        col2.error("⚠️ 认知衰退风险：高")
+    if prediction[0] > 30 and prediction[0] <= 65:
+        col2.warning("⚠️ 认知衰退风险：中")
+    if prediction[0] > 65:
+        col2.success("✅ 认知衰退风险：低")
 
     # Additional insights based on visualization relationships
     st.write("### 影响您得分的关键因素:")
     factors = []
+
+    # Reaction time analysis (strong negative correlation visible in plot)
+    if reaction_time > 500:
+        factors.append("⚠️ 您较低的认知分数与较长的反应时间（>500ms）显著相关。")
+    elif reaction_time > 400:
+        factors.append("⚠️ 您中等的反应时间可能影响认知表现。")
+    else:
+        factors.append("✅ 您较短的反应时间与较高的认知分数显著相关")
 
     # Sleep duration impact
     if sleep_duration < 6:
