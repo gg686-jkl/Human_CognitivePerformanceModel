@@ -66,13 +66,13 @@ if st.button("开始评估"):
     col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
         
     if prediction[0] <= 30:
-        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：高")
+        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
         
     if prediction[0] > 30 and prediction[0] <= 65:
-        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：中")
+        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
         
     if prediction[0] > 65:
-        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：低")
+        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
 
 
     # Reaction time analysis (strong negative correlation visible in plot)
