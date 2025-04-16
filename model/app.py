@@ -95,11 +95,6 @@ if st.button("Predict"):
     if screen_time > 7:
         factors.append("⚠️ 长时间使用电子设备可能导致认知疲劳")
 
-    # exercise analysis
-    if exercise == "Low":
-        factors.append("⚠️ 运动过少可能损害认知功能")
-    elif exercise == "High":
-        factors.append("✅ 多运动有助于提升认知表现。")
         
 
     # Display all factors as a bulleted list
