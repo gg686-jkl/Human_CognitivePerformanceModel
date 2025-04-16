@@ -63,53 +63,60 @@ if st.button("Predict"):
 
     # Reaction time analysis (strong negative correlation visible in plot)
     if reaction_time > 500:
-        col2.error("⚠️ High reaction time (>500ms) strongly correlates with lower cognitive scores")
+        col2.error("⚠️ 您较低的认知分数与较长的反应时间（>500ms）显著相关。")
     elif reaction_time > 400:
-        col2.warning("⚠️ Moderate reaction time may impact cognitive performance")
+        col2.warning("⚠️ 您中等的反应时间可能影响认知表现。")
     else:
-        col2.success("✅ Fast reaction time correlates with higher cognitive scores")
+        col2.success("✅ 您较短的反应时间与较高的认知分数显著相关")
 
     # Additional insights based on visualization relationships
-    st.write("### Key Factors Affecting Your Score:")
+    st.write("### 影响您得分的关键因素:")
     factors = []
 
     # Sleep duration impact
     if sleep_duration < 6:
-        factors.append("⚠️ Low sleep duration (<6 hours) may negatively affect cognitive abilities")
+        factors.append("⚠️ 每天睡不够6小时，脑子可能变迟钝！")
     elif sleep_duration > 8:
-        factors.append("✅ Optimal sleep duration detected (>8 hours)")
+        factors.append("✅ 你的睡眠很完美！（＞8小时）")
         
     # Memory score analysis (based on the banded distribution)
     if memory_score > 80:
-        factors.append("✅ High memory test score strongly supports cognitive performance")
+        factors.append("✅ 记忆力测试高分显著支持认知表现。")
     elif memory_score < 50:
-        factors.append("⚠️ Lower memory test scores may indicate cognitive challenges")
+        factors.append("⚠️ 记忆力测试得分低？可能是大脑发出的警告信号！")
 
     # Stress level impact
     if stress_level > 7:
-        factors.append("⚠️ High stress levels can impair cognitive function")
+        factors.append("⚠️ 高压力水平可能损害认知功能。")
     elif stress_level < 4:
-        factors.append("✅ Lower stress levels support better cognitive performance")
+        factors.append("✅ 较低压力水平有助于提升认知表现。")
 
     # Screen time analysis
-    if screen_time > 8:
-        factors.append("⚠️ Extended screen time may contribute to cognitive fatigue")
+    if screen_time > 7:
+        factors.append("⚠️ 长时间使用电子设备可能导致认知疲劳")
+
+    # exercise analysis
+    if exercise == "Low":
+        factors.append("⚠️ 运动过少可能损害认知功能")
+    elif exercise == "High":
+        factors.append("✅ 多运动有助于提升认知表现。")
+        
 
     # Display all factors as a bulleted list
     for factor in factors:
         st.write(factor)
 
     # Visualization of where this score falls on distribution
-    st.write("### Your Score in Context:")
+    st.write("### 看看您的成绩处于什么水平？:")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.linspace(0, 100, 1000)
     y = np.exp(-0.5 * ((x - 50) / 15)**2) 
     ax.plot(x, y)
-    ax.axvline(x=prediction[0], color='red', linestyle='--')
+    ax.axvline(x=prediction[0], color='blue', linestyle='--')
     ax.fill_between(x[x <= prediction[0]], y[x <= prediction[0]], alpha=0.3, color='red')
-    ax.set_xlabel('Cognitive Score')
-    ax.set_ylabel('Density')
+    ax.set_xlabel('认知分数')
+    ax.set_ylabel('分布密度')
     ax.set_xlim(0, 100)
-    ax.set_title('Your Score Relative to Population Distribution')
+    ax.set_title('您的得分超过了多少比例的人群？')
     st.pyplot(fig)
