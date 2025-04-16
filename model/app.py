@@ -59,6 +59,8 @@ if st.button("Predict"):
     # Visualization of prediction
     st.write("## Prediction Analysis")
     col1, col2 = st.columns(2)
+    if prediction[0] < 1:
+        prediction[0] = 1
     col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
 
     # Reaction time analysis (strong negative correlation visible in plot)
@@ -95,6 +97,12 @@ if st.button("Predict"):
     if screen_time > 7:
         factors.append("⚠️ 长时间使用电子设备可能导致认知疲劳")
 
+        # exercise analysis
+    if exercise == "Low":
+        factors.append("⚠️ 运动过少可能损害认知功能")
+    elif exercise == "High":
+        factors.append("✅ 多运动有助于提升认知表现。")
+
         
 
     # Display all factors as a bulleted list
@@ -102,7 +110,7 @@ if st.button("Predict"):
         st.write(factor)
 
     # Visualization of where this score falls on distribution
-    st.write("### 看看您的成绩处于什么水平？:")
+    st.write("### Your Score in Context:")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.linspace(0, 100, 1000)
@@ -110,8 +118,8 @@ if st.button("Predict"):
     ax.plot(x, y)
     ax.axvline(x=prediction[0], color='blue', linestyle='--')
     ax.fill_between(x[x <= prediction[0]], y[x <= prediction[0]], alpha=0.3, color='red')
-    ax.set_xlabel('认知分数')
-    ax.set_ylabel('分布密度')
+    ax.set_xlabel('Cognitive Score')
+    ax.set_ylabel('Density')
     ax.set_xlim(0, 100)
     ax.set_title('您的得分超过了多少比例的人群？')
     st.pyplot(fig)
