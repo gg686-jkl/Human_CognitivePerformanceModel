@@ -12,12 +12,12 @@ model = joblib.load('cognitive_model.pkl')
 # Define user input fields
 st.title("认知能力评估")
 age = st.number_input("年龄", min_value=18, max_value=80, step=1)
-gender = st.radio("性别", ["男", "女"])
+gender = st.radio("性别", ["男", "女", "不愿透露"])
 sleep_duration = st.number_input("睡眠时间 (小时)", min_value=0.0, max_value=24.0, step=0.1)
 stress_level = st.slider("压力水平 (1-10)", min_value=1, max_value=10)
 diet_type = st.radio("Diet Type", ["非素食主义者", "纯素主义者", "素食主义者"])
 screen_time = st.number_input("日常屏幕时间 (小时)", min_value=0.0, max_value=24.0, step=0.1)
-exercise = st.radio("运动频率", ["Low", "Medium", "High"])
+exercise = st.radio("运动频率", ["低", "中等", "高"])
 caffeine = st.number_input("咖啡因摄入量 (mg)", min_value=0, max_value=500, step=1)
 reaction_time = st.number_input("反应时间 (ms)", min_value=0.0, max_value=600.0, step=0.1)
 memory_score = st.number_input("记忆测试分数", min_value=0, max_value=100, step=1)
@@ -33,15 +33,15 @@ if st.button("开始评估"):
         'Caffeine_Intake': caffeine,
         'Reaction_Time': reaction_time,
         'Memory_Test_Score': memory_score,
-        'Gender_Female': 1 if gender == "Female" else 0,
-        'Gender_Male': 1 if gender == "Male" else 0,
-        'Gender_Other': 1 if gender == "Other" else 0,  
-        'Diet_Type_Non-Vegetarian': 1 if diet_type == "Non-Vegetarian" else 0,
-        'Diet_Type_Vegan': 1 if diet_type == "Vegan" else 0,
-        'Diet_Type_Vegetarian': 1 if diet_type == "Vegetarian" else 0,
-        'Exercise_Frequency_High': 1 if exercise == "High" else 0,
-        'Exercise_Frequency_Low': 1 if exercise == "Low" else 0,
-        'Exercise_Frequency_Medium': 1 if exercise == "Medium" else 0
+        'Gender_Female': 1 if gender == "女" else 0,
+        'Gender_Male': 1 if gender == "男" else 0,
+        'Gender_Other': 1 if gender == "不愿透露" else 0,  
+        'Diet_Type_Non-Vegetarian': 1 if diet_type == "非素食主义者" else 0,
+        'Diet_Type_Vegan': 1 if diet_type == "纯素主义者" else 0,
+        'Diet_Type_Vegetarian': 1 if diet_type == "素食主义者" else 0,
+        'Exercise_Frequency_High': 1 if exercise == "高" else 0,
+        'Exercise_Frequency_Low': 1 if exercise == "低" else 0,
+        'Exercise_Frequency_Medium': 1 if exercise == "中等" else 0
     }
 
     # Convert to DataFrame to ensure correct feature order
