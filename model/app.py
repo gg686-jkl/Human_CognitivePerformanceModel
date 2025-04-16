@@ -10,20 +10,20 @@ import joblib
 model = joblib.load('cognitive_model.pkl')
 
 # Define user input fields
-st.title("Cognitive Performance Prediction")
-age = st.number_input("Age", min_value=18, max_value=80, step=1)
-gender = st.radio("Gender", ["Male", "Female"])
-sleep_duration = st.number_input("Sleep Duration (hours)", min_value=0.0, max_value=24.0, step=0.1)
-stress_level = st.slider("Stress Level (1-10)", min_value=1, max_value=10)
-diet_type = st.radio("Diet Type", ["Non-Vegetarian", "Vegan", "Vegetarian"])
-screen_time = st.number_input("Daily Screen Time (hours)", min_value=0.0, max_value=24.0, step=0.1)
-exercise = st.radio("Exercise Frequency", ["Low", "Medium", "High"])
-caffeine = st.number_input("Caffeine Intake (mg)", min_value=0, max_value=500, step=1)
-reaction_time = st.number_input("Reaction Time (ms)", min_value=0.0, max_value=600.0, step=0.1)
-memory_score = st.number_input("Memory Test Score", min_value=0, max_value=100, step=1)
+st.title("认知能力评估")
+age = st.number_input("年龄", min_value=18, max_value=80, step=1)
+gender = st.radio("性别", ["男", "女"])
+sleep_duration = st.number_input("睡眠时间 (小时)", min_value=0.0, max_value=24.0, step=0.1)
+stress_level = st.slider("压力水平 (1-10)", min_value=1, max_value=10)
+diet_type = st.radio("Diet Type", ["非素食主义者", "纯素主义者", "素食主义者"])
+screen_time = st.number_input("日常屏幕时间 (小时)", min_value=0.0, max_value=24.0, step=0.1)
+exercise = st.radio("运动频率", ["Low", "Medium", "High"])
+caffeine = st.number_input("咖啡因摄入量 (mg)", min_value=0, max_value=500, step=1)
+reaction_time = st.number_input("反应时间 (ms)", min_value=0.0, max_value=600.0, step=0.1)
+memory_score = st.number_input("记忆测试分数", min_value=0, max_value=100, step=1)
 
 # Predict button
-if st.button("Predict"):
+if st.button("开始评估"):
     # Create a dictionary with user inputs
     input_dict = {
         'Age': age,
@@ -61,7 +61,18 @@ if st.button("Predict"):
     col1, col2 = st.columns(2)
     if prediction[0] < 1:
         prediction[0] = 1
-    col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
+    elif prediction[0] > 100:
+        prediction[0] = 100
+        
+    if prediction[0] <= 30:
+        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：高")
+        
+    if prediction[0] > 30 and prediction[0] <= 65:
+        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：中")
+        
+    if prediction[0] > 65:
+        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}  认知衰退风险：低")
+
 
     # Reaction time analysis (strong negative correlation visible in plot)
     if reaction_time > 500:
