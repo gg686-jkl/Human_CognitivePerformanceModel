@@ -7,7 +7,7 @@ import numpy as np
 import joblib
 
 # Load the trained model
-model = joblib.load('cognitive_model.pkl')
+model = joblib.load('cognitive_model2.pkl')
 
 # Define user input fields
 st.title("认知能力评估")
