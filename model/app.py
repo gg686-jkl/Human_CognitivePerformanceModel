@@ -63,17 +63,8 @@ if st.button("开始评估"):
         prediction[0] = 1
     elif prediction[0] > 100:
         prediction[0] = 100
+        
     col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
-        
-    if prediction[0] <= 30:
-        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
-        
-    if prediction[0] > 30 and prediction[0] <= 65:
-        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
-        
-    if prediction[0] > 65:
-        col1.metric("Predicted Cognitive Score", f"{prediction[0]:.2f}")
-
 
     # Reaction time analysis (strong negative correlation visible in plot)
     if prediction[0] <= 30:
@@ -92,26 +83,18 @@ if st.button("开始评估"):
         factors.append("⚠️ 您较低的认知分数与较长的反应时间（>500ms）显著相关。")
     elif reaction_time > 400:
         factors.append("⚠️ 您中等的反应时间可能影响认知表现。")
-    else:
-        factors.append("✅ 您较短的反应时间与较高的认知分数显著相关")
 
     # Sleep duration impact
     if sleep_duration < 6:
         factors.append("⚠️ 每天睡不够6小时，脑子可能变迟钝！")
-    elif sleep_duration > 8:
-        factors.append("✅ 你的睡眠很完美！（＞8小时）")
         
-    # Memory score analysis (based on the banded distribution)
-    if memory_score > 80:
-        factors.append("✅ 记忆力测试高分显著支持认知表现。")
-    elif memory_score < 50:
+    # Memory score analysis (based on the banded distribution) 
+    if memory_score < 60:
         factors.append("⚠️ 记忆力测试得分低？可能是大脑发出的警告信号！")
 
     # Stress level impact
     if stress_level > 7:
         factors.append("⚠️ 高压力水平可能损害认知功能。")
-    elif stress_level < 4:
-        factors.append("✅ 较低压力水平有助于提升认知表现。")
 
     # Screen time analysis
     if screen_time > 7:
@@ -120,10 +103,7 @@ if st.button("开始评估"):
         # exercise analysis
     if exercise == "Low":
         factors.append("⚠️ 运动过少可能损害认知功能")
-    elif exercise == "High":
-        factors.append("✅ 多运动有助于提升认知表现。")
 
-        
 
     # Display all factors as a bulleted list
     for factor in factors:
