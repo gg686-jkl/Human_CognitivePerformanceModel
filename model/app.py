@@ -57,14 +57,14 @@ if st.button("开始评估"):
     prediction = model.predict(input_df)
 
     # Visualization of prediction
-    st.write("## Prediction Analysis")
+    st.write("## 评估分析")
     col1, col2 = st.columns(2)
     if prediction[0] < 1:
         prediction[0] = 1
     elif prediction[0] > 100:
         prediction[0] = 100
         
-    col1.metric("认知能力评估分数:", f"{prediction[0]:.2f}")
+    col1.metric("## 认知能力评估分数:", f"{prediction[0]:.2f}")
 
     # Reaction time analysis (strong negative correlation visible in plot)
     if prediction[0] <= 30:
@@ -110,7 +110,7 @@ if st.button("开始评估"):
         st.write(factor)
 
     # Visualization of where this score falls on distribution
-    st.write("### Your Score in Context:")
+    st.write("### 您的分数在人群的位置:")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.linspace(0, 100, 1000)
