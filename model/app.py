@@ -5,7 +5,8 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 import numpy as np
 import joblib
-import seaborn as sns  
+import seaborn as sns
+from scipy import stats
 
 # 加载原始分数数据（添加缓存装饰器提升性能）
 @st.cache_data
