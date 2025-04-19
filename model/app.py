@@ -148,8 +148,8 @@ if st.button("开始评估"):
         ax.text(x=prediction[0]+2, 
                y=0.025,
                s=f'Highter than {percentile:.1f}% of the population',
-               color='red',
-               fontsize=12)
+               color='blue',
+               fontsize=20)
 
         # 美化图表
         ax.set_xlim(0, 100)
