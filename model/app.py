@@ -118,31 +118,49 @@ if st.button("开始评估"):
     for factor in factors:
         st.write(factor)
 
-    # 替换原有模拟分布的代码
-st.write("### 您的分数在真实人群中的位置")
+    st.write("### 您的分数在真实人群中的位置")
 
-fig, ax = plt.subplots(figsize=(12, 6))
+    try:
+        # 创建画布
+        fig, ax = plt.subplots(figsize=(12, 6))
 
-# 使用核密度估计（KDE）绘制真实分布
-sns.kdeplot(original_scores, fill=True, color="skyblue", alpha=0.3, 
-            linewidth=2, label='人群分布', ax=ax)
+        # 核密度估计（KDE）绘制真实分布
+        sns.kdeplot(original_scores, 
+                   fill=True, 
+                   color="skyblue", 
+                   alpha=0.3,
+                   linewidth=2,
+                   label='人群分布',
+                   ax=ax)
 
-# 标记用户分数
-ax.axvline(x=prediction[0], color='red', linestyle='--', 
-          linewidth=2, label='您的分数')
-ax.fill_betweenx(y=np.linspace(0, 0.03, 100), x1=prediction[0], 
-                x2=prediction[0]+5, color='red', alpha=0.1)
+        # 标记用户分数
+        ax.axvline(x=prediction[0], 
+                  color='red', 
+                  linestyle='--',
+                  linewidth=2,
+                  label='您的分数')
+        
+        # 计算百分位数（需在顶部导入 from scipy import stats）
+        percentile = stats.percentileofscore(original_scores, prediction[0])
+        
+        # 添加标注
+        ax.text(x=prediction[0]+2, 
+               y=0.025,
+               s=f'超过 {percentile:.1f}% 的人群',
+               color='red',
+               fontsize=12)
 
-# 标注百分位数
-percentile = stats.percentileofscore(original_scores, prediction[0])
-ax.text(x=prediction[0]+2, y=0.025, 
-       s=f'超过 {percentile:.1f}% 的人群', 
-       color='red', fontsize=12)
+        # 美化图表
+        ax.set_xlim(0, 100)
+        ax.set_xlabel('认知分数', fontsize=12)
+        ax.set_ylabel('密度', fontsize=12)
+        ax.set_title('真实人群认知分数分布与您的定位', pad=20, fontsize=14)
+        ax.legend()
+        
+        # 显示图表
+        st.pyplot(fig)
 
-# 美化图表
-ax.set_xlim(0, 100)
-ax.set_xlabel('认知分数', fontsize=12)
-ax.set_ylabel('密度', fontsize=12)
-ax.set_title('真实人群认知分数分布与您的定位', pad=20, fontsize=14)
-ax.legend()
-st.pyplot(fig)
+    except NameError:
+        st.error("无法显示分布图：缺少人群分布数据")
+    except Exception as e:
+        st.error(f"可视化错误: {str(e)}")
