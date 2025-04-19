@@ -6,6 +6,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import joblib
 
+# 加载原始分数数据（添加缓存装饰器提升性能）
+@st.cache_data
+def load_distribution():
+    return np.load('cognitive_score_distribution.npy')
+
+original_scores = load_distribution()
+
 # Load the trained model
 model = joblib.load('cognitive_model2.pkl')
 scaler = joblib.load('scaler.pkl')  # 新增这一行
@@ -110,17 +117,31 @@ if st.button("开始评估"):
     for factor in factors:
         st.write(factor)
 
-    # Visualization of where this score falls on distribution
-    st.write("### 您的分数在人群的位置:")
+    # 替换原有模拟分布的代码
+st.write("### 您的分数在真实人群中的位置")
 
-    fig, ax = plt.subplots(figsize=(12, 6))
-    x = np.linspace(0, 100, 1000)
-    y = np.exp(-0.5 * ((x - 50) / 15)**2) 
-    ax.plot(x, y)
-    ax.axvline(x=prediction[0], color='blue', linestyle='--')
-    ax.fill_between(x[x <= prediction[0]], y[x <= prediction[0]], alpha=0.3, color='red')
-    ax.set_xlabel('Cognitive Score')
-    ax.set_ylabel('Density')
-    ax.set_xlim(0, 100)
-    ax.set_title('Your Score Relative to Population Distribution')
-    st.pyplot(fig)
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# 使用核密度估计（KDE）绘制真实分布
+sns.kdeplot(original_scores, fill=True, color="skyblue", alpha=0.3, 
+            linewidth=2, label='人群分布', ax=ax)
+
+# 标记用户分数
+ax.axvline(x=prediction[0], color='red', linestyle='--', 
+          linewidth=2, label='您的分数')
+ax.fill_betweenx(y=np.linspace(0, 0.03, 100), x1=prediction[0], 
+                x2=prediction[0]+5, color='red', alpha=0.1)
+
+# 标注百分位数
+percentile = stats.percentileofscore(original_scores, prediction[0])
+ax.text(x=prediction[0]+2, y=0.025, 
+       s=f'超过 {percentile:.1f}% 的人群', 
+       color='red', fontsize=12)
+
+# 美化图表
+ax.set_xlim(0, 100)
+ax.set_xlabel('认知分数', fontsize=12)
+ax.set_ylabel('密度', fontsize=12)
+ax.set_title('真实人群认知分数分布与您的定位', pad=20, fontsize=14)
+ax.legend()
+st.pyplot(fig)
