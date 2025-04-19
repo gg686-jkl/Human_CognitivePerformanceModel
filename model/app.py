@@ -131,7 +131,7 @@ if st.button("开始评估"):
                    color="skyblue", 
                    alpha=0.3,
                    linewidth=2,
-                   label='人群分布',
+                   label='Crowd distribution',
                    ax=ax)
 
         # 标记用户分数
@@ -139,7 +139,7 @@ if st.button("开始评估"):
                   color='red', 
                   linestyle='--',
                   linewidth=2,
-                  label='您的分数')
+                  label='Your cognitive ability score')
         
         # 计算百分位数（需在顶部导入 from scipy import stats）
         percentile = stats.percentileofscore(original_scores, prediction[0])
@@ -147,15 +147,15 @@ if st.button("开始评估"):
         # 添加标注
         ax.text(x=prediction[0]+2, 
                y=0.025,
-               s=f'超过 {percentile:.1f}% 的人群',
+               s=f'Highter than {percentile:.1f}% of the population',
                color='red',
                fontsize=12)
 
         # 美化图表
         ax.set_xlim(0, 100)
-        ax.set_xlabel('认知分数', fontsize=12)
-        ax.set_ylabel('密度', fontsize=12)
-        ax.set_title('真实人群认知分数分布与您的定位', pad=20, fontsize=14)
+        ax.set_xlabel('Cognitive ability score', fontsize=12)
+        ax.set_ylabel('Density', fontsize=12)
+        ax.set_title('Distribution of cognitive scores in the general population and your percentile ranking', pad=20, fontsize=14)
         ax.legend()
         
         # 显示图表
