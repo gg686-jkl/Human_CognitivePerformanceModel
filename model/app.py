@@ -8,6 +8,7 @@ import joblib
 
 # Load the trained model
 model = joblib.load('cognitive_model2.pkl')
+scaler = joblib.load('scaler.pkl')  # 新增这一行
 
 # Define user input fields
 st.title("认知能力评估")
@@ -52,9 +53,9 @@ if st.button("开始评估"):
                         'Diet_Type_Non-Vegetarian', 'Diet_Type_Vegan', 'Diet_Type_Vegetarian',
                         'Exercise_Frequency_High', 'Exercise_Frequency_Low', 'Exercise_Frequency_Medium']
     input_df = input_df[expected_columns]
-
+    input_scaled = scaler.transform(input_df)  # 新增
     # Make prediction
-    prediction = model.predict(input_df)
+    prediction = model.predict(input_scaled)
 
     # Visualization of prediction
     st.write("## 评估分析")
