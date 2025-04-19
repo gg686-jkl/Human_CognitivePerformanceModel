@@ -145,11 +145,7 @@ if st.button("开始评估"):
         percentile = stats.percentileofscore(original_scores, prediction[0])
         
         # 添加标注
-        ax.text(x=prediction[0]+2, 
-               y=0.025,
-               s=f'Highter than {percentile:.1f}% of the population',
-               color='blue',
-               fontsize=20)
+        st.write(f'Highter than {percentile:.1f}% of the population')
 
         # 美化图表
         ax.set_xlim(0, 100)
