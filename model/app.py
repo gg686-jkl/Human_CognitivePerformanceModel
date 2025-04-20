@@ -167,8 +167,8 @@ if st.button("开始评估"):
                bbox=dict(facecolor='white', alpha=0.8))
 
         # 图例与样式
-        ax.set(xlim=(0,100), xlabel='认知分数', 
-              title='风险区间划分与分布特征')
+        ax.set(xlim=(0,100), xlabel='Cognitive Ability Score', 
+              title='Risk Interval Classification and Distribution Characteristics')
         ax.legend(loc='upper left')
         st.pyplot(fig)
     except Exception as e:
