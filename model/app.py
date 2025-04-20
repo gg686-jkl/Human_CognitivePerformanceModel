@@ -73,8 +73,6 @@ if st.button("开始评估"):
         prediction[0] = 1
     elif prediction[0] > 100:
         prediction[0] = 100
-        
-    col1.metric("## 认知能力评估分数:", f"{prediction[0]:.2f}")
 
     # 计算基础统计量
     mu = np.mean(original_scores)
@@ -152,20 +150,20 @@ if st.button("开始评估"):
         
         # 主分布曲线
         sns.kdeplot(original_scores, fill=True, color="skyblue", 
-                    alpha=0.3, label='人群分布')
+                    alpha=0.3, label='population distribution')
         
         # 阈值参考线
         ax.axvline(high_risk, color='firebrick', linestyle='--', 
-                  label=f'高风险阈值 ({high_risk:.1f})')
+                  label=f'high-risk threshold ({high_risk:.1f})')
         ax.axvline(mid_risk, color='darkorange', linestyle='--',
-                  label=f'中风险阈值 ({mid_risk:.1f})')
+                  label=f'moderate-risk threshold ({mid_risk:.1f})')
         ax.axvline(score, color='red', linewidth=2, 
-                  label=f'您的分数 ({score:.1f})')
+                  label=f'Your score ({score:.1f})')
         
         # 标注关键统计量
         text_x = np.percentile(original_scores, 95)
         ax.text(text_x, ax.get_ylim()[1]*0.6, 
-               f"μ = {mu:.1f}\nσ = {sigma:.1f}\n偏度 = {skewness:.2f}\n峰度 = {kurt:.2f}",
+               f"μ = {mu:.1f}\nσ = {sigma:.1f}\nskewness = {skewness:.2f}\nkurtosis = {kurt:.2f}",
                bbox=dict(facecolor='white', alpha=0.8))
 
         # 图例与样式
