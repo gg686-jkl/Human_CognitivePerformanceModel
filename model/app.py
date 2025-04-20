@@ -76,13 +76,39 @@ if st.button("开始评估"):
         
     col1.metric("## 认知能力评估分数:", f"{prediction[0]:.2f}")
 
-    # Reaction time analysis (strong negative correlation visible in plot)
-    if prediction[0] <= 30:
-        col2.error("⚠️ 认知衰退风险：高")
-    if prediction[0] > 30 and prediction[0] <= 65:
-        col2.warning("⚠️ 认知衰退风险：中")
-    if prediction[0] > 65:
-        col2.success("✅ 认知衰退风险：低")
+    # 计算基础统计量
+    mu = np.mean(original_scores)
+    sigma = np.std(original_scores)
+    skewness = stats.skew(original_scores)
+    kurt = stats.kurtosis(original_scores)
+    
+    # 基于分布的阈值计算
+    if abs(skewness) < 1 and abs(kurt) < 1:  # 接近正态分布时
+        high_risk = max(mu - 1.5*sigma, np.min(original_scores))
+        mid_risk = mu - 0.5*sigma
+    else:  # 偏态分布时使用百分位数
+        high_risk = np.percentile(original_scores, 10)
+        mid_risk = np.percentile(original_scores, 30)
+    
+    # 风险等级判定
+    score = np.clip(prediction[0], 0, 100)
+    
+    if score <= high_risk:
+        risk_level = "高"
+        color_fn = col2.error
+        criteria = f"(最低{100 - stats.percentileofscore(original_scores, high_risk):.0f}%人群)"
+    elif score <= mid_risk:
+        risk_level = "中" 
+        color_fn = col2.warning
+        criteria = f"(最低{100 - stats.percentileofscore(original_scores, mid_risk):.0f}%人群)"
+    else:
+        risk_level = "低"
+        color_fn = col2.success
+        criteria = f"(前{stats.percentileofscore(original_scores, score):.0f}%人群)"
+    
+    # 显示风险等级
+    col1.metric("认知能力评估分数:", f"{score:.2f}")
+    color_fn(f"认知衰退风险：{risk_level} {criteria}")
 
     # Additional insights based on visualization relationships
     st.write("### 影响您得分的关键因素:")
@@ -122,42 +148,52 @@ if st.button("开始评估"):
     st.write("### 您的分数在真实人群中的位置")
 
     try:
-        # 创建画布
-        fig, ax = plt.subplots(figsize=(12, 6))
-
-        # 核密度估计（KDE）绘制真实分布
-        sns.kdeplot(original_scores, 
-                   fill=True, 
-                   color="skyblue", 
-                   alpha=0.3,
-                   linewidth=2,
-                   label='Crowd distribution',
-                   ax=ax)
-
-        # 标记用户分数
-        ax.axvline(x=prediction[0], 
-                  color='red', 
-                  linestyle='--',
-                  linewidth=2,
-                  label='Your cognitive ability score')
+        fig, ax = plt.subplots(figsize=(12,6))
         
-        # 计算百分位数（需在顶部导入 from scipy import stats）
-        percentile = stats.percentileofscore(original_scores, prediction[0])
+        # 主分布曲线
+        sns.kdeplot(original_scores, fill=True, color="skyblue", 
+                    alpha=0.3, label='人群分布')
         
-        # 添加标注
-        st.write(f'## Highter than {percentile:.1f}% of the population')
+        # 阈值参考线
+        ax.axvline(high_risk, color='firebrick', linestyle='--', 
+                  label=f'高风险阈值 ({high_risk:.1f})')
+        ax.axvline(mid_risk, color='darkorange', linestyle='--',
+                  label=f'中风险阈值 ({mid_risk:.1f})')
+        ax.axvline(score, color='red', linewidth=2, 
+                  label=f'您的分数 ({score:.1f})')
+        
+        # 标注关键统计量
+        text_x = np.percentile(original_scores, 95)
+        ax.text(text_x, ax.get_ylim()[1]*0.6, 
+               f"μ = {mu:.1f}\nσ = {sigma:.1f}\n偏度 = {skewness:.2f}\n峰度 = {kurt:.2f}",
+               bbox=dict(facecolor='white', alpha=0.8))
 
-        # 美化图表
-        ax.set_xlim(0, 100)
-        ax.set_xlabel('Cognitive ability score', fontsize=12)
-        ax.set_ylabel('Density', fontsize=12)
-        ax.set_title('Distribution of cognitive scores in the general population and your percentile ranking', pad=20, fontsize=14)
-        ax.legend()
-        
-        # 显示图表
+        # 图例与样式
+        ax.set(xlim=(0,100), xlabel='认知分数', 
+              title='风险区间划分与分布特征')
+        ax.legend(loc='upper left')
         st.pyplot(fig)
-
-    except NameError:
-        st.error("无法显示分布图：缺少人群分布数据")
     except Exception as e:
         st.error(f"可视化错误: {str(e)}")
+
+    with st.expander("📊 风险划分方法论"):
+        st.markdown(f"""
+        **动态阈值计算规则**
+        - 数据分布检测: 
+          - 偏度 = {skewness:.2f} ({'接近正态' if abs(skewness)<1 else '偏态分布'})
+          - 峰度 = {kurt:.2f}
+        - 最终采用方法: {'标准差法' if abs(skewness)<1 else '百分位数法'}
+        
+        **当前阈值定义**
+        - 高风险 (<{high_risk:.1f}): 
+          {f'μ - 1.5σ = {mu:.1f} - 1.5×{sigma:.1f}' if abs(skewness)<1 else '最差10%人群'}
+        - 中风险 (<{mid_risk:.1f}): 
+          {f'μ - 0.5σ = {mu:.1f} - 0.5×{sigma:.1f}' if abs(skewness)<1 else '最差30%人群'}
+        
+        **数据特征**
+        - 样本量: {len(original_scores):,}
+        - 分数范围: {np.min(original_scores):.1f} ~ {np.max(original_scores):.1f}
+        - 中位数: {np.median(original_scores):.1f}
+        """)
+
+    
