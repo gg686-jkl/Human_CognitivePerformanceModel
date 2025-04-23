@@ -29,8 +29,8 @@ diet_type = st.radio("饮食习惯", ["非素食主义者", "纯素主义者", "
 screen_time = st.number_input("日常屏幕时间 (小时<=24)", min_value=0.0, max_value=24.0, step=0.1)
 exercise = st.radio("运动频率", ["低", "中等", "高"])
 caffeine = st.number_input("咖啡因摄入量 (mg<=500)", min_value=0, max_value=500, step=1)
-reaction_time = st.number_input("反应时间 (ms<=600)", min_value=0.0, max_value=600.0, step=0.1)
-memory_score = st.number_input("记忆测试分数", min_value=0, max_value=100, step=1)
+reaction_time = st.number_input("反应时间 (ms<=600)，测试网址：https://humanbenchmark.com/", min_value=0.0, max_value=500, step=0.1)
+memory_score = st.number_input("记忆测试分数，测试网址：https://memtrax.com/", min_value=0, max_value=100, step=1)
 
 # Predict button
 if st.button("开始评估"):
